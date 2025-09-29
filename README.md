@@ -6,7 +6,7 @@ Features
 - Synthetic, reproducible dataset with two Gaussian clusters (balanced classes)
 - Interactive scatter plot (Chart.js) with light theme
 - Hover tooltips with coordinates
-- One-click CSV download (columns: x1, x2, y)
+- One-click CSV copy to clipboard (columns: x1, x2, y)
 
 Files
 - index.html — Entry point (loads Chart.js via CDN)
@@ -25,7 +25,7 @@ How to run locally
 What students see
 - A scatter plot of points (x1 vs x2) colored by class: blue (0) and red (1)
 - A counter with the total number of points
-- A “Download CSV” button to save the current dataset
+- A “Copy CSV” button to copy the current dataset to clipboard
 
 Notes
 - The data is synthetic and reproducible via a seeded RNG in app.js.

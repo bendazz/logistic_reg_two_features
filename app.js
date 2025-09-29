@@ -27,17 +27,21 @@ function generateData({ n = 200, seed = 42 } = {}) {
   // Create two Gaussian blobs for classes 0 (blue) and 1 (red)
   // Means are separated to create a non-trivial decision boundary
   const means = {
-    0: { x1: -1.0, x2: -0.5 },
-    1: { x1: 1.1, x2: 0.7 },
+    // Shift to lie mostly within [0,10]
+    0: { x1: 3.0, x2: 3.5 },
+    1: { x1: 7.0, x2: 6.5 },
   };
-  const std = 0.8; // shared std for both features
+  const std = 1.1; // slightly wider but will clamp to [0,10]
 
   const data = [];
   for (let i = 0; i < n; i++) {
     const y = i < n / 2 ? 0 : 1; // balance classes
     const m = means[y];
-    const x1 = m.x1 + std * randn(rng);
-    const x2 = m.x2 + std * randn(rng);
+    let x1 = m.x1 + std * randn(rng);
+    let x2 = m.x2 + std * randn(rng);
+    // Clamp to [0,10]
+    x1 = Math.min(10, Math.max(0, x1));
+    x2 = Math.min(10, Math.max(0, x2));
     data.push({ x1, x2, y });
   }
   return data;
@@ -53,15 +57,31 @@ function toCsv(rows) {
 }
 
 function downloadText(filename, text) {
-  const blob = new Blob([text], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  // Deprecated in this app: switching to clipboard copy. Keeping function name
+  // for minimal changes elsewhere.
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).catch(() => {
+      // Fallback if clipboard API fails
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta);
+    });
+  } else {
+    // Fallback for very old browsers
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
+  }
 }
 
 function createScatterChart(ctx, points) {
@@ -254,10 +274,18 @@ window.addEventListener("DOMContentLoaded", () => {
   document.getElementById("downloadCsvBtn").addEventListener("click", () => {
     const csv = toCsv(DATA);
     downloadText("two_feature_binary_dataset.csv", csv);
+    // Optional: brief visual confirmation
+    const btn = document.getElementById("downloadCsvBtn");
+    const prev = btn.textContent;
+    btn.textContent = "Copied!";
+    setTimeout(() => { btn.textContent = prev; }, 900);
   });
 
   // Regenerate button: new seed to produce a different dataset each time
   document.getElementById("regenBtn").addEventListener("click", () => {
+    // Reset animation state and boundary to baseline
+    stopAnimation();
+    stepIndex = -1;
     currentSeed = (currentSeed * 9301 + 49297) % 233280; // simple LCG step
     DATA = generateData({ n: 200, seed: currentSeed || 1 });
     document.getElementById("nPoints").textContent = String(DATA.length);
@@ -275,7 +303,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     chart.data.datasets[0].data = blue;
     chart.data.datasets[1].data = red;
-    // dataset[2] is the x2=0 line
+    // Reset decision line to baseline y = 0
     chart.data.datasets[2].data = [
       { x: xMin - padX, y: 0 },
       { x: xMax + padX, y: 0 },
@@ -286,14 +314,8 @@ window.addEventListener("DOMContentLoaded", () => {
     chart.options.scales.y.min = yMin - padY;
     chart.options.scales.y.max = yMax + padY;
 
-    // If weights are loaded, keep current boundary (or baseline if reset)
-    if (WEIGHT_STEPS.length > 0) {
-      if (stepIndex >= 0) {
-        setDecisionLineFromWeights(WEIGHT_STEPS[stepIndex]);
-      } else {
-        setBaselineLine();
-      }
-    }
+    // Always baseline on regenerate
+    setBaselineLine();
 
     chart.update();
     // Initialize UI state for animation controls
