@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Logistic Regression: Two Features</title>
+    <meta name="description" content="Interactive scatter plot for binary classification with two features." />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="stylesheet" href="./style.css" />
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js" defer></script>
+    <script src="./app.js" type="module" defer></script>
+  </head>
+  <body>
+    <header class="container">
+      <h1>Logistic Regression — Two Features</h1>
+    </header>
+
+    <main class="container">
+      <section class="panel controls">
+        <div class="controls-left">
+          <button id="downloadCsvBtn" class="btn">Download CSV</button>
+          <button id="regenBtn" class="btn" style="margin-left: 0.5rem;">Regenerate Data</button>
+        </div>
+        <div class="controls-right">
+          <span id="summary" class="summary">n = <span id="nPoints">0</span></span>
+        </div>
+      </section>
+
+      <section class="panel chart-panel">
+        <canvas id="scatterChart" aria-label="Scatter plot of x1 vs x2 colored by class" role="img"></canvas>
+      </section>
+
+      <section class="panel weights-panel" aria-labelledby="weightsHeading">
+        <h2 id="weightsHeading" class="panel-title">Decision Boundary Animation</h2>
+        <p class="muted">Paste your CSV of weights (columns: w0,w1,w2) then animate the boundary.</p>
+
+        <textarea id="weightsCsv" rows="8" placeholder="w0,w1,w2
+0,0,1
+..." aria-label="Weights CSV input"></textarea>
+
+        <div class="weights-controls">
+          <div class="left">
+            <button id="loadWeightsBtn" class="btn">Load Weights</button>
+            <button id="animateBtn" class="btn" disabled>Animate</button>
+            <button id="stepBtn" class="btn" disabled>Step</button>
+            <button id="resetAnimBtn" class="btn" disabled>Reset</button>
+          </div>
+          <div class="right">
+            <label for="speedRange" class="muted">Speed</label>
+            <input id="speedRange" type="range" min="50" max="1500" value="300" />
+            <span id="animStatus" class="muted">0 steps loaded</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="container footer">
+      
+    </footer>
+  </body>
+  </html>

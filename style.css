@@ -1,0 +1,93 @@
+:root {
+  --bg: #f7f9fc;
+  --panel: #ffffff;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --primary: #2563eb;
+  --primary-contrast: #ffffff;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.45;
+}
+
+.container {
+  max-width: 1000px;
+  padding: 1.25rem;
+  margin: 0 auto;
+}
+
+header h1 {
+  margin: 0 0 0.25rem;
+  font-weight: 700;
+}
+.subtitle { color: var(--muted); margin: 0; }
+.muted { color: var(--muted); }
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.btn {
+  appearance: none;
+  background: var(--primary);
+  color: var(--primary-contrast);
+  border: 1px solid var(--primary);
+  padding: 0.5rem 0.9rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.btn:hover { filter: brightness(1.05); }
+.btn:active { transform: translateY(1px); }
+
+.summary { color: var(--muted); }
+
+.chart-panel { height: 560px; }
+.chart-panel canvas { width: 100% !important; height: 100% !important; }
+
+.footer { color: var(--muted); text-align: center; }
+
+@media (max-width: 640px) {
+  .chart-panel { height: 420px; }
+}
+
+  .weights-panel { margin-top: 1rem; }
+  .panel-title { margin: 0 0 0.5rem; }
+  textarea#weightsCsv {
+    width: 100%;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.5rem;
+    background: #fbfcfe;
+  }
+  .weights-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+  .weights-controls .left { display: flex; gap: 0.5rem; align-items: center; }
+  .weights-controls .right { display: flex; gap: 0.5rem; align-items: center; }
